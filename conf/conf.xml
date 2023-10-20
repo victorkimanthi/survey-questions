@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><API xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="" xsi:schemaLocation="">
+    <UNDERTOW DISPLAY_ENDPOINTS="YES" IO_THREAD_POOL="20" WORKER_THREAD_POOL="40">
+        <PORT REST="8081"/>
+        <HOST REST="0.0.0.0"/>
+        <BASE_PATH PORTAL="" REST="//assessment.careers.skyworld.co.ke/api"/>
+    </UNDERTOW>
+    <DB>
+        <DATABASE_TYPE>PostgreSQL</DATABASE_TYPE>
+        <HOST>localhost</HOST>
+        <PORT>5432</PORT>
+        <DATABASE_NAME TYPE="ENCRYPTED">CfuYq6AmamNs9hWn4OpHcO3631ud+Lp7k2VBdZV9ybw=</DATABASE_NAME>
+        <USERNAME TYPE="ENCRYPTED">DU3SOEwcSYPuY2maD61/aA==</USERNAME>
+        <PASSWORD TYPE="ENCRYPTED">mDzBWKv7FOlYmxxPxA+1PA==</PASSWORD>
+        <CONNECTION_PARAMETERS>
+         stringtype=unspecified
+        </CONNECTION_PARAMETERS>
+        <SHOW_SQL>false</SHOW_SQL>
+        <SLING_RING>
+            <INITIAL_POOL_SIZE VALUE="3"/>
+            <MAXIMUM_POOL_SIZE VALUE="6"/>
+            <EXTRA_CONNS_SIZE VALUE="5"/>
+            <FIND_FREE_CONN_AFTER TIME_UNIT="MILLISECONDS" VALUE="1500"/>
+            <DOWNSIZE_AFTER TIME_UNIT="MINUTES" VALUE="2"/>
+            <PING_AFTER TIME_UNIT="MINUTES" VALUE="60"/>
+        </SLING_RING>
+    </DB>
+    <FILES>
+    <FILESUPLOADPATH>/home/victor/interview-survey-files/</FILESUPLOADPATH>
+    </FILES>
+</API><!--To add new elements to the config file: if you are validating it with the XSD (/conf/conf.schema.xsd),
+         then the element must be defined in the XSD as well. If not validating, then you can add, but risk messing your config.-->
