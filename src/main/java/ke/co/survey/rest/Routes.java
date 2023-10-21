@@ -17,21 +17,18 @@ import ke.co.skyworld.ancillaries.undertow_rest.layers.FallBack;
 import ke.co.skyworld.ancillaries.undertow_rest.layers.InvalidMethod;
 import ke.co.survey.questions.AddResponse;
 import ke.co.survey.questions.GetQuestions;
+import ke.co.survey.responses.GetIndividualResponse;
+import ke.co.survey.responses.GetResponses;
 import ke.co.survey.rest.middleware.HandlerAuthHeadersValidator;
 
 
 public class Routes {
-    public static RoutingHandler responses() {
-        return Handlers.routing()
-//                .get("",handlerNoAuthBlocking(new TestRepository()))
-                .add(Methods.OPTIONS, "/*", new CorsHandler())
-                .setInvalidMethodHandler(new Dispatcher(new InvalidMethod()))
-                .setFallbackHandler(new Dispatcher(new FallBack()));
-    }
-
     public static RoutingHandler questions() {
         return Handlers.routing()
                 .post("",handlerNoAuthUpload(new AddResponse()))
+                .get("/responses",handlerNoAuthBlocking(new GetResponses()))
+//                .get("/responses/{intervieweeId}",handlerNoAuthBlocking(new GetIndividualResponse()))
+                .get("/response",handlerNoAuthBlocking(new GetIndividualResponse()))
                 .get("", handlerNoAuthBlocking(new GetQuestions()))
                 .add(Methods.OPTIONS, "/*", new CorsHandler())
                 .setInvalidMethodHandler(new Dispatcher(new InvalidMethod()))

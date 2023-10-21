@@ -37,10 +37,7 @@ public class RestAPIServer {
         try {
 
             PathHandler pathHandler = Handlers.path()
-                    //.addExactPath(BASE_PORTAL_URL+"/", Routes.portal())
                     .addPrefixPath(BASE_REST_API_URL + "/questions", Routes.questions())
-                    .addPrefixPath(BASE_REST_API_URL + "/responses", Routes.responses())
-                    //.addPrefixPath(BASE_REST_API_URL + "/server-sent-events", Routes.customSSEHandler())
             ;
 
             server = Undertow.builder()
