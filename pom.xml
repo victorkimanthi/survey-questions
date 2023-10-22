@@ -9,6 +9,12 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+        <maven-shade-plugin.version>3.1.1</maven-shade-plugin.version>
+        <maven-surefire-plugin>2.22.2</maven-surefire-plugin>
+        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
+
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,5 +34,146 @@
             <version>42.6.0</version>
         </dependency>
     </dependencies>
+    <build>
+        <finalName>interview_survey_snapshot_${project.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+                <includes>
+                    <include>**/*.ttf</include>
+                    <!--here you can also insert your .fxml files or .css files for example-->
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
+                <executions>
+                    <!--                    <execution>-->
+                    <!--                        <id>shading_execution_no_libs</id>-->
+                    <!--                        <phase>package</phase>-->
+                    <!--                        <goals>-->
+                    <!--                            <goal>shade</goal>-->
+                    <!--                        </goals>-->
+                    <!--                        <inherited>false</inherited>-->
+                    <!--                        <configuration>-->
+                    <!--                            <finalName>sky_support_crm_${project.version}</finalName>-->
+                    <!--                            <filters>-->
+                    <!--                                <filter>-->
+                    <!--                                    <artifact>*:*</artifact>-->
+                    <!--                                    <excludes>-->
+                    <!--                                        <exclude>META-INF/*.SF</exclude>-->
+                    <!--                                        <exclude>META-INF/*.DSA</exclude>-->
+                    <!--                                        <exclude>META-INF/*.RSA</exclude>-->
+                    <!--                                    </excludes>-->
+                    <!--                                </filter>-->
+                    <!--                            </filters>-->
+                    <!--                            <artifactSet>-->
+                    <!--                                <includes>-->
+                    <!--                                    <include>ke.co.skyworld.*</include>-->
+                    <!--                                </includes>-->
+                    <!--                            </artifactSet>-->
+                    <!--                        </configuration>-->
+                    <!--                    </execution>-->
+                    <execution>
+                        <id>shading_execution12</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <finalName>interview-survey-api-${project.version}</finalName>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib/</outputDirectory>
+                            <excludeGroupIds>ke.co.skyworld</excludeGroupIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>ke.co.survey.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-jar</argument>
+                        <argument>target/${project.build.finalName}.jar</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin}</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <propertyName>java.library.path</propertyName>
+                        <buildDirectory>/usr/local/lib</buildDirectory>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>

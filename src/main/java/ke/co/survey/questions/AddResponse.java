@@ -212,14 +212,13 @@ public class AddResponse extends ExchangeContextAuthenticated {
     String extractString(String string) {
 //            String stringInput = "ERROR: duplicate key value violates unique constraint \"vendor_user_groups_group_name_uindex\"\n  Detail: Key (group_name)=(Backend Developers) already exists.";
 
-        String stringInput = string;
         String detailPart = "";
 
         // Define the pattern using regular expression
         Pattern pattern = Pattern.compile("Detail: Key (.*)");
 
         // Create a matcher using the pattern and input string
-        Matcher matcher = pattern.matcher(stringInput);
+        Matcher matcher = pattern.matcher(string);
 
         // Find the match and extract the captured group
         if (matcher.find()) {

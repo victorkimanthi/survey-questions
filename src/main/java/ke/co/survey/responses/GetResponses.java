@@ -1,6 +1,5 @@
 package ke.co.survey.responses;
 
-import groovyjarjarantlr4.v4.runtime.misc.FlexibleHashMap;
 import io.undertow.server.HttpServerExchange;
 import ke.co.skyworld.ancillaries.query_manager.beans.FlexicoreArrayList;
 import ke.co.skyworld.ancillaries.query_manager.beans.FlexicoreHashMap;
@@ -74,9 +73,9 @@ public class GetResponses extends ExchangeContextAuthenticated {
 
             if(filterString == null) {
 
-                 wrapper2 = Repository.selectWhereOrderBy(organizationId, "responses","DISTINCT full_name,gender,email_address,description,frontend_stack,certificates,date_created as date_responded",
+                 wrapper2 = Repository.selectWhereOrderBy(organizationId, "responses","DISTINCT interviewee_id,full_name,gender,email_address,description,frontend_stack,certificates,date_created as date_responded",
                          new FilterPredicate(" email_address = COALESCE(:email_address, email_address)"),"date_created DESC",
-                         new FlexicoreHashMap().addQueryArgument(":email_address",email));
+                         new FlexicoreHashMap().addQueryArgument(":email_address",email),pageNoPageSize);
 
                 if(wrapper2.hasErrors()){
                     ExchangeResponse.sendInternalServerError(httpServerExchange,wrapper2.getErrors());
@@ -95,7 +94,7 @@ public class GetResponses extends ExchangeContextAuthenticated {
 
                  wrapper2 = Repository.selectWhereOrderBy(organizationId, "responses","DISTINCT full_name,gender,email_address,description,frontend_stack,certificates,date_created as date_responded",
                         filterTWrapper.getData().filterPredicate.customFilter("OR email_address = :email_address"),"date_created DESC",
-                        filterTWrapper.getData().queryArguments.addQueryArgument(":email_address",email));
+                        filterTWrapper.getData().queryArguments.addQueryArgument(":email_address",email),pageNoPageSize);
 
                 System.out.println("wrapper2:" + wrapper2.getData());
             }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><API xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="" xsi:schemaLocation="">
     <UNDERTOW DISPLAY_ENDPOINTS="YES" IO_THREAD_POOL="20" WORKER_THREAD_POOL="40">
-        <PORT REST="8081"/>
+        <PORT REST="8080"/>
         <HOST REST="0.0.0.0"/>
         <BASE_PATH PORTAL="" REST="//assessment.careers.skyworld.co.ke/api"/>
     </UNDERTOW>
