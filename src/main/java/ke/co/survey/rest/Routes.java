@@ -17,6 +17,7 @@ import ke.co.skyworld.ancillaries.undertow_rest.layers.FallBack;
 import ke.co.skyworld.ancillaries.undertow_rest.layers.InvalidMethod;
 import ke.co.survey.questions.AddResponse;
 import ke.co.survey.questions.GetQuestions;
+import ke.co.survey.responses.GetAttachedFile;
 import ke.co.survey.responses.GetIndividualResponse;
 import ke.co.survey.responses.GetResponses;
 import ke.co.survey.rest.middleware.HandlerAuthHeadersValidator;
@@ -29,6 +30,7 @@ public class Routes {
                 .get("/responses",handlerNoAuthBlocking(new GetResponses()))
 //                .get("/responses/{intervieweeId}",handlerNoAuthBlocking(new GetIndividualResponse()))
                 .get("/response",handlerNoAuthBlocking(new GetIndividualResponse()))
+                .get("/responses/download",handlerNoAuthBlocking(new GetAttachedFile()))
                 .get("", handlerNoAuthBlocking(new GetQuestions()))
                 .add(Methods.OPTIONS, "/*", new CorsHandler())
                 .setInvalidMethodHandler(new Dispatcher(new InvalidMethod()))

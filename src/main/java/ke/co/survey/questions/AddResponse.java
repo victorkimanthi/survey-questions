@@ -35,15 +35,13 @@ public class AddResponse extends ExchangeContextAuthenticated {
     @Override
     public void handleRequest(HttpServerExchange httpServerExchange, UserSessionContext userSessionContext, Object... objects) {
 
-        TransactionWrapper wrapper = new TransactionWrapper<>();
+        TransactionWrapper<FlexicoreHashMap> wrapper = new TransactionWrapper<>();
         String organizationId = StringRefs.SENTINEL;
 //        String fullTempFileName = null;
-        StringBuilder filesStringBuilder = new StringBuilder();
-        List<String> filesList = new ArrayList<>();
+//        List<String> filesList = new ArrayList<>();
         try {
             //get authorization
             HeaderValues authHeader = httpServerExchange.getRequestHeaders().get("Authorization");
-
             String authHeaderString = authHeader.get(0);
             //getting formData
             FormData formData2 = httpServerExchange.getAttachment(FormDataParser.FORM_DATA);
@@ -122,10 +120,27 @@ public class AddResponse extends ExchangeContextAuthenticated {
 
 //                Files.move(Paths.get(tempFile.getPath()), Paths.get(uploadFolderPath + fullTempFileName), StandardCopyOption.REPLACE_EXISTING);
                     Files.move(Paths.get(tempFile.getPath()), Paths.get(userDirectoryPath + "/" + realFileName), StandardCopyOption.REPLACE_EXISTING);
-                    filesList.add(realFileName);
+//                    filesList.add(realFileName);
+
+                    //map to insert files
+                   FlexicoreHashMap flexicoreHashMap = new FlexicoreHashMap();
+                   flexicoreHashMap.put("interviewee_id",authHeaderString);
+                   flexicoreHashMap.put("file_name",realFileName);
+
+                   TransactionWrapper <FlexicoreHashMap> wrapper2 = Repository.insertAutoIncremented(organizationId, "response_attachments",flexicoreHashMap);
+                    System.out.println("flexicoreHashMap:" + flexicoreHashMap);
+
+                    if (wrapper2.hasErrors()) {
+                        if (wrapper2.getErrors().contains("duplicate key value")) {
+                            ExchangeResponse.sendForbidden(httpServerExchange,"The field "+ extractString(wrapper2.getErrors())+"Confirm to ensure you entered the right value.");
+                        } else {
+                            ExchangeResponse.sendInternalServerError(httpServerExchange, wrapper2.getErrors());
+                        }
+                        return;
+                    }
                 }
 
-                System.out.println("filesList:" + filesList);
+                /*System.out.println("filesList:" + filesList);
                 int noOfFiles = filesList.size();
                 System.out.println("no of files" + noOfFiles);
                 for (int i = 0; i < noOfFiles; i++) {
@@ -140,11 +155,12 @@ public class AddResponse extends ExchangeContextAuthenticated {
 
                 if (responseMap != null) {
                     responseMap.put("certificates", filesStringBuilder.toString());
-                }
+                }*/
             }
 
             //query to insert into organization details table
             if (responseMap != null) {
+                System.out.println("is it reaching here");
                 wrapper = Repository.insertAutoIncremented(organizationId, "responses", responseMap);
             }
             System.out.println("responseMap:" + responseMap);
@@ -153,7 +169,7 @@ public class AddResponse extends ExchangeContextAuthenticated {
                 if (wrapper.getErrors().contains("duplicate key value")) {
                     ExchangeResponse.sendForbidden(httpServerExchange,"The field "+ extractString(wrapper.getErrors())+"Confirm to ensure you entered the right value.");
                 } else {
-                    ExchangeResponse.sendInternalServerError(httpServerExchange, "An error occurred while trying to create that response.");
+                    ExchangeResponse.sendInternalServerError(httpServerExchange, wrapper.getErrors());
                 }
                 return;
             }
