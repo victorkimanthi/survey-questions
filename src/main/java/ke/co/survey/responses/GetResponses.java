@@ -68,12 +68,22 @@ public class GetResponses extends ExchangeContextAuthenticated {
                 return;
             }*/
 
+
+            TransactionWrapper <FlexicoreArrayList> wrapper = Repository.select(organizationId, "response_attachments","DISTINCT file_id,interviewee_id,file_name");
+
+            if (wrapper.hasErrors()) {
+                ExchangeResponse.sendInternalServerError(httpServerExchange,wrapper.getErrors());
+                return;
+            }
+
+            FlexicoreArrayList filesArrayList = wrapper.getData();
+
             String filterString = userSessionContext.getFilter();
             System.out.println("filterString:"+filterString);
 
             if(filterString == null) {
 
-                 wrapper2 = Repository.selectWhereOrderBy(organizationId, "responses","DISTINCT interviewee_id,full_name,gender,email_address,description,frontend_stack,certificates,date_created as date_responded",
+                 wrapper2 = Repository.selectWhereOrderBy(organizationId, "responses","DISTINCT interviewee_id,full_name,gender,email_address,description,frontend_stack,date_created as date_responded",
                          new FilterPredicate(" email_address = COALESCE(:email_address, email_address)"),"date_created DESC",
                          new FlexicoreHashMap().addQueryArgument(":email_address",email),pageNoPageSize);
 
@@ -92,7 +102,7 @@ public class GetResponses extends ExchangeContextAuthenticated {
                     return;
                 }
 
-                 wrapper2 = Repository.selectWhereOrderBy(organizationId, "responses","DISTINCT full_name,gender,email_address,description,frontend_stack,certificates,date_created as date_responded",
+                 wrapper2 = Repository.selectWhereOrderBy(organizationId, "responses","DISTINCT full_name,gender,email_address,description,frontend_stack,date_created as date_responded",
                         filterTWrapper.getData().filterPredicate.customFilter("OR email_address = :email_address"),"date_created DESC",
                         filterTWrapper.getData().queryArguments.addQueryArgument(":email_address",email),pageNoPageSize);
 
@@ -117,6 +127,22 @@ public class GetResponses extends ExchangeContextAuthenticated {
             if (resultArrayList.isEmpty()) {
                 ExchangeResponse.sendNotFound(httpServerExchange,"No records","There were no records found.");
                 return;
+            }
+
+            for (FlexicoreHashMap flexicoreHashMap2:resultArrayList) {
+                flexicoreHashMap2.put("certificates",new FlexicoreArrayList());
+                FlexicoreArrayList filesDetailsList = new FlexicoreArrayList();
+
+                for (FlexicoreHashMap flexicoreHashMap3:filesArrayList ) {
+
+                    if(flexicoreHashMap2.get("interviewee_id").equals(flexicoreHashMap3.get("interviewee_id"))){
+                        FlexicoreHashMap flexicoreHashMap4 = new FlexicoreHashMap();
+                        flexicoreHashMap4.put("fileId",flexicoreHashMap3.get("file_id"));
+                        flexicoreHashMap4.put("fileName",flexicoreHashMap3.get("file_name"));
+                       filesDetailsList.add(flexicoreHashMap4);
+                       flexicoreHashMap2.put("certificates",filesDetailsList);
+                    }
+                }
             }
 
             System.out.println("resultArrayList:"+resultArrayList);
